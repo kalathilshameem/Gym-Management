@@ -49,8 +49,12 @@
                         <li><a href="">Home</a></li>
                         <li><a href="">About Us</a></li>
                         <li><a href="">Services</a></li>
-                            <li><a href="">Register</a></li>
-                            <li><a href="">Login</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                            {% else %}
+                                <li><a href="{% url 'register' %}">Register</a></li>
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                            {% endif %}
                         <li><a href="">Contact</a></li>
                     </ul>
                 </nav>
@@ -81,8 +85,14 @@
                     <div class="row">
                         <div class="col-lg-6 offset-lg-6">
                             <div class="hi-text">
+                                {% if user.is_authenticated %}
+                                <span style="font-size:30px;"><i>Welcome <b style="font-size:35px">{{ user.username }}  !</b></i></span><br>
                                 <span>Shape your body</span>
                                 <h1>No <strong>Excuses</strong> Keep Grainding</h1>
+                                {% else %}
+                                <span>Shape your body</span>
+                                <h1>No <strong>Excuses</strong> Keep Grainding</h1>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
