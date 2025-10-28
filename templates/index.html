@@ -46,16 +46,12 @@
             <div class="col-lg-6">
                 <nav class="nav-menu">
                     <ul>
-                        <li><a href="{% url 'index' %}">Home</a></li>
-                        <li><a href="{% url 'about' %}">About Us</a></li>
-                        <li><a href="{% url 'services' %}">Services</a></li>
-                        {% if user.is_authenticated %}
-                            <li><a href="{% url 'logout' %}">Logout</a></li>
-                        {% else %}
-                            <li><a href="{% url 'register' %}">Register</a></li>
-                            <li><a href="{% url 'login' %}">Login</a></li>
-                        {% endif %}
-                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                        <li><a href="">Home</a></li>
+                        <li><a href="">About Us</a></li>
+                        <li><a href="">Services</a></li>
+                            <li><a href="">Register</a></li>
+                            <li><a href="">Login</a></li>
+                        <li><a href="">Contact</a></li>
                     </ul>
                 </nav>
             </div>
@@ -85,14 +81,8 @@
                     <div class="row">
                         <div class="col-lg-6 offset-lg-6">
                             <div class="hi-text">
-                                {% if user.is_authenticated %}
-                                <span style="font-size:30px;"><i>Welcome <b style="font-size:35px">{{ user.username }}  !</b></i></span><br>
                                 <span>Shape your body</span>
                                 <h1>No <strong>Excuses</strong> Keep Grainding</h1>
-                                {% else %}
-                                <span>Shape your body</span>
-                                <h1>No <strong>Excuses</strong> Keep Grainding</h1>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -103,14 +93,8 @@
                     <div class="row">
                         <div class="col-lg-6 offset-lg-6">
                             <div class="hi-text">
-                                {% if user.is_authenticated %}
-                                <span style="font-size:30px;"><i>Welcome <b style="font-size:35px">{{ user.username }}  !</b></i></span><br>
                                 <span>Shape your body</span>
                                 <h1>Be <strong>strong</strong> traning hard</h1>
-                                {% else %}
-                                <span>Shape your body</span>
-                                <h1>Be <strong>strong</strong> traning hard</h1>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -245,7 +229,7 @@
                     <div class="bs-text">
                         <h2>registration now to get more deals</h2>
                         <div class="bt-tips">Where health, beauty and fitness meet.</div>
-                        <a href="{% url 'contact' %}" class="primary-btn  btn-normal">Enquire Now</a>
+                        <a href="" class="primary-btn  btn-normal">Enquire Now</a>
                     </div>
                 </div>
             </div>
@@ -280,7 +264,7 @@
                             <li>Month to mouth</li>
                             <li>No time restriction</li>
                         </ul>
-                        <a href="{% url 'contact' %}" class="primary-btn pricing-btn">Do Enquiry Now</a>
+                        <a href="" class="primary-btn pricing-btn">Do Enquiry Now</a>
                         <a class="thumb-icon"><i class="fa fa-picture-o"></i></a>
                     </div>
                 </div>
@@ -299,7 +283,7 @@
                             <li>Month to mouth</li>
                             <li>No time restriction</li>
                         </ul>
-                        <a href="{% url 'contact' %}" class="primary-btn pricing-btn">Do Enquiry Now</a>
+                        <a href="" class="primary-btn pricing-btn">Do Enquiry Now</a>
                         <a class="thumb-icon"><i class="fa fa-picture-o"></i></a>
                     </div>
                 </div>
@@ -318,7 +302,7 @@
                             <li>Month to mouth</li>
                             <li>No time restriction</li>
                         </ul>
-                        <a href="{% url 'contact' %}" class="primary-btn pricing-btn">Do Enquiry Now</a>
+                        <a href="" class="primary-btn pricing-btn">Do Enquiry Now</a>
                         <a class="thumb-icon"><i class="fa fa-picture-o"></i></a>
                     </div>
                 </div>
@@ -363,7 +347,7 @@
                             <span>Our Team</span>
                             <h2>TRAIN WITH EXPERTS</h2>
                         </div>
-                        <a href="{% url 'contact' %}" class="primary-btn btn-normal appoinment-btn">Enquire Now</a>
+                        <a href="" class="primary-btn btn-normal appoinment-btn">Enquire Now</a>
                     </div>
                 </div>
             </div>
