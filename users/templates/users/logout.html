@@ -1,1 +1,167 @@
 
+{% block content %}
+<style>
+    .auth-section {
+        min-height: 100vh;
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .auth-container {
+        background: #161616;
+        max-width: 440px;
+        margin: 0 auto;
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        border: 1px solid #2a2a2a;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .auth-header h2 {
+        color: #FF5722;
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header .icon {
+        font-size: 2.5rem;
+        color: #FF5722;
+        margin-bottom: 1rem;
+    }
+
+    .auth-form .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-form label {
+        display: block;
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .auth-form input {
+        width: 100%;
+        padding: 0.9rem;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .auth-form input:focus {
+        outline: none;
+        border-color: #FF5722;
+        box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
+    }
+
+    .auth-form button {
+        width: 100%;
+        padding: 1rem;
+        background: #FF5722;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .auth-form button:hover {
+        background: #E64A19;
+        transform: translateY(-1px);
+    }
+
+    .auth-links {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .auth-links a {
+        color: #FF5722;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .auth-links a:hover {
+        color: #E64A19;
+    }
+
+    .social-auth {
+        margin-top: 2rem;
+        border-top: 1px solid #2a2a2a;
+        padding-top: 1.5rem;
+        text-align: center;
+    }
+
+    .social-auth p {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    .social-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .social-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .google-btn {
+        background: #4285F4;
+        color: white;
+    }
+
+    .github-btn {
+        background: #333;
+        color: white;
+    }
+</style>
+
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-header">
+            <h2>Logged Out</h2>
+        </div>
+
+        <div class="logout-content" style="text-align: center">
+            <p style="color: #888; margin: 2rem 0; line-height: 1.6">
+                You've been successfully logged out. <br>
+                We hope to see you again soon!
+            </p>
+
+            <div style="display: flex; gap: 1rem; justify-content: center">
+                <a href="{% url 'login' %}" class="social-btn" style="background: #FF5722">Login Again</a>
+                <a href="{% url 'index' %}" class="social-btn" style="background: #2a2a2a">Return Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
