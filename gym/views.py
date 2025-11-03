@@ -20,7 +20,9 @@ def about(request):
 def contact(request):
     return render(request, 'contact.html')
         
-
+def dashboard(request):
+    return render(request, 'dashboard.html')
+    
 def contact_view(request):
     if request.method == "POST":
         name = request.POST.get("name")
