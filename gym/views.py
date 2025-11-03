@@ -29,3 +29,6 @@ def contact_view(request):
 def contact_list(request):
     contacts = ContactForm.objects.all().order_by('-created_at')
     return render(request, 'contact_list.html', {'contacts': contacts})
+
+def services(request):
+    return render(request, 'services.html')
