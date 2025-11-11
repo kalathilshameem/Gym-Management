@@ -99,3 +99,28 @@ def edit_member(request, id):
 
     return render(request, 'edit_member.html', {'form': form})
 
+def delete_member(request, member_id):  # Parameter name matches URL pattern
+    if request.method == 'POST':
+        member = get_object_or_404(Member, id=member_id)
+        try:
+            user = member.user
+            user.delete()
+            messages.success(request, f'Member {member.name} deleted successfully!')
+        except Exception as e:
+            messages.error(request, f'Error deleting member: {str(e)}')
+        return redirect('members_list')
+    return HttpResponseNotAllowed(['POST'])
+
+
+def add_member(request):
+    if request.method == 'POST':
+        form = MemberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Member added successfully!')
+            return redirect('members_list')
+    else:
+        form = MemberForm()
+
+    return render(request, 'edit_member.html', {'form': form})
+
