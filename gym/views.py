@@ -43,3 +43,35 @@ def contact_list(request):
 
 def services(request):
     return render(request, 'services.html')
+
+def member_registration(request):
+    if request.method == 'POST':
+        form = MemberForm(request.POST)
+        if form.is_valid():
+            try:
+                # Create User first
+                user = User.objects.create_user(
+                    username=form.cleaned_data['biometric_id'],
+                    email=form.cleaned_data['email'],
+                    password='default_password@123'  
+                )
+
+                # Create Member with the user reference
+                member = form.save(commit=False)
+                member.user = user
+                member.save()
+
+                messages.success(request, 'Member registered successfully!')
+                return redirect('members_list')
+
+            except IntegrityError as e:
+                messages.error(request, f'Database error: {str(e)}')
+            except Exception as e:
+                messages.error(request, f'Unexpected error: {str(e)}')
+        else:
+            messages.error(request, 'Please correct the errors below')
+    else:
+        form = MemberForm()
+
+    return render(request, 'member_registration.html', {'form': form})
+
