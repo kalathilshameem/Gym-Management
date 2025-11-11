@@ -75,3 +75,27 @@ def member_registration(request):
 
     return render(request, 'member_registration.html', {'form': form})
 
+def members_list(request):
+    today = timezone.now().date()
+    members = Member.objects.all().order_by('-id')
+
+    for member in members:
+        member.days_remaining = (member.membership_end - today).days
+        member.bmi = round(float(member.weight) / (float(member.height) ** 2), 1)
+
+    return render(request, 'members_list.html', {'members': members})
+
+
+def edit_member(request, id):
+    member = get_object_or_404(Member, id=id)
+    if request.method == 'POST':
+        form = MemberForm(request.POST, instance=member)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Member updated successfully!')
+            return redirect('members_list')
+    else:
+        form = MemberForm(instance=member)
+
+    return render(request, 'edit_member.html', {'form': form})
+
