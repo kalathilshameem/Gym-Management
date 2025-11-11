@@ -10,3 +10,30 @@ class ContactForm(models.Model):
 
     def __str__(self):
         return self.name
+
+class Member(models.Model):
+    name = models.CharField(max_length=250)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Remove null=True
+    email = models.EmailField(unique=True)
+    biometric_id = models.CharField(max_length=100, unique=True)
+    height = models.DecimalField(max_digits=4, decimal_places=2)  # Allows values like 1.75m
+    weight = models.FloatField()
+    membership_start = models.DateField()
+    membership_end = models.DateField()
+    emergency_contact = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.name
+
+
+@property
+def bmi(self):
+    return round(float(self.weight) / (float(self.height) ** 2), 2)
+
+@property
+def days_remaining(self):
+    return (self.membership_end - datetime.today().date()).days
+
+
+def _str_(self):
+    return f"{self.user.get_full_name()} ({self.biometric_id})"
