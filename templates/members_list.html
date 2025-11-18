@@ -1,126 +1,935 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center fw-bold text-primary mb-4">
-        <i class="fas fa-users"></i> Members List
-    </h2>
+<div class="container-fluid px-4 py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="dashboard-header text-center">
+                <h1 class="display-5 fw-bold gradient-text mb-3">
+                    <i class="fas fa-users me-3"></i>Members Management
+                </h1>
+            </div>
+        </div>
+    </div>
 
-    <!-- Search Bar -->
-    <div class="row justify-content-center mb-3">
-        <div class="col-md-6">
-            <input type="text" id="search-input" class="form-control" placeholder="🔍 Search by name..." onkeyup="searchMembers()">
+    <!-- Stats Overview Cards -->
+    <div class="row mb-5">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card info-card p-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="card-title">Total Members</h3>
+                            <h2 class="card-value">{{ members|length }}</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card success-card p-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="card-title">Active Members</h3>
+                            <h2 class="card-value" id="active-members-count">0</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card warning-card p-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="card-title">Expiring Soon</h3>
+                            <h2 class="card-value" id="expiring-soon-count">0</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card danger-card p-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="card-title">Expired</h3>
+                            <h2 class="card-value" id="expired-count">0</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="search-filter-card">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="search-input" class="form-control search-input" 
+                                   placeholder="Search members by name, ID, or email...">
+                            <div class="search-loader d-none">
+                                <div class="spinner-border spinner-border-sm" role="status"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select filter-select" id="status-filter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="expiring">Expiring Soon</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select filter-select" id="bmi-filter">
+                            <option value="">All BMI Ranges</option>
+                            <option value="underweight">Underweight</option>
+                            <option value="normal">Normal</option>
+                            <option value="overweight">Overweight</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Members Table -->
-    <div class="table-responsive">
-        <table class="table table-bordered text-center" id="members-table">
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Height (m)</th>
-                    <th>Weight (kg)</th>
-                    <th>BMI</th>
-                    <th>Membership End Date</th>
-                    <th>Days Remaining</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for member in members %}
-                <tr class="animate-row">
-                    <td class="fw-bold">{{ member.id }}</td>
-                    <td>{{ member.name }}</td>
-                    <td>{{ member.height }}</td>
-                    <td>{{ member.weight }}</td>
-                    <td>
-                        <span class="badge bmi-badge"
-                              data-bmi="{{ member.bmi }}">{{ member.bmi }}</span>
-                    </td>
-                    <td>{{ member.membership_end }}</td>
-                    <td>
-                        <span class="badge {% if member.days_remaining < 3 %}bg-danger{% elif member.days_remaining < 7 %}bg-warning{% else %}bg-success{% endif %}">
-                            {{ member.days_remaining }} Days
-                        </span>
-                    </td>
-<td>
-    <a href="{% url 'edit_member' member.id %}" class="btn btn-sm btn-primary">
-        <i class="fas fa-edit"></i>
-    </a>
-    <button class="btn btn-sm btn-danger delete-btn" data-member-id="{{ member.id }}">
-        <i class="fas fa-trash"></i>
-    </button>
-</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="8" class="text-muted">No members found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="row">
+        <div class="col-12">
+            <div class="premium-table-card">
+                <div class="table-header">
+                    <h4><i class="fas fa-list me-2"></i>Members List</h4>
+                    <div class="table-actions">
+                        <button class="btn btn-export" id="export-btn">
+                            <i class="fas fa-download me-2"></i>Export
+                        </button>
+                        <a href="{% url 'add_member' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Member
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover" id="members-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="id">
+                                    ID <i class="fas fa-sort"></i>
+                                </th>
+                                <th class="sortable" data-sort="name">
+                                    Member <i class="fas fa-sort"></i>
+                                </th>
+                                <th>Physical Data</th>
+                                <th class="sortable" data-sort="bmi">
+                                    BMI Status <i class="fas fa-sort"></i>
+                                </th>
+                                <th class="sortable" data-sort="membership_end">
+                                    Membership <i class="fas fa-sort"></i>
+                                </th>
+                                <th>Days Left</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in members %}
+                            <tr class="member-row" 
+                                data-member-id="{{ member.id }}" 
+                                data-days-remaining="{{ member.days_remaining }}"
+                                data-bmi-value="{{ member.bmi }}">
+                                <td>
+                                    <div class="member-id">#{{ member.id }}</div>
+                                </td>
+                                <td>
+                                    <div class="member-info">
+                                        <div class="member-name">{{ member.name }}</div>
+                                        <div class="member-email">{{ member.email|default:"No email" }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="physical-data">
+                                        <div class="data-item">
+                                            <i class="fas fa-ruler-vertical"></i>
+                                            <span>{{ member.height }}m</span>
+                                        </div>
+                                        <div class="data-item">
+                                            <i class="fas fa-weight"></i>
+                                            <span>{{ member.weight }}kg</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="bmi-indicator">
+                                        <div class="bmi-value">{{ member.bmi }}</div>
+                                        <div class="bmi-category" data-bmi="{{ member.bmi }}">
+                                            Calculating...
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="membership-info">
+                                        <div class="end-date">{{ member.membership_end }}</div>
+                                        <div class="membership-type">
+                                            {% if member.days_remaining > 30 %}Premium
+                                            {% elif member.days_remaining > 0 %}Standard
+                                            {% else %}Expired
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="days-remaining">
+                                        <div class="days-badge" data-days="{{ member.days_remaining }}">
+                                            {{ member.days_remaining }} Days
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'edit_member' member.id %}" class="btn-action btn-edit" 
+                                           data-bs-toggle="tooltip" title="Edit Member">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn-action btn-delete delete-btn" 
+                                                data-member-id="{{ member.id }}"
+                                                data-member-name="{{ member.name }}"
+                                                data-bs-toggle="tooltip" title="Delete Member">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="fas fa-users fa-3x mb-3"></i>
+                                        <h4>No Members Found</h4>
+                                        <p>Get started by adding your first member.</p>
+                                        <a href="{% url 'add_member' %}" class="btn btn-primary">
+                                            <i class="fas fa-plus me-2"></i>Add First Member
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if members.has_other_pages %}
+                <div class="table-footer">
+                    <div class="pagination-container">
+                        <nav>
+                            <ul class="pagination">
+                                {% if members.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ members.previous_page_number }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                
+                                {% for i in members.paginator.page_range %}
+                                <li class="page-item {% if members.number == i %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                </li>
+                                {% endfor %}
+                                
+                                {% if members.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ members.next_page_number }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" id="deleteForm">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content premium-modal">
+            <div class="modal-header">
+                <div class="modal-icon danger">
+                    <i class="fas fa-exclamation-triangle"></i>
                 </div>
-                <div class="modal-body">
-                    Are you sure you want to delete this member?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </div>
-            </form>
+                <h5 class="modal-title text-black">Delete Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-black">
+                <p>Are you sure you want to delete this member? This action cannot be undone.</p>
+                <div class="member-preview" id="deleteMemberPreview"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" id="deleteForm" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Member
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript -->
+<!-- Premium Styling -->
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        --info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Header Styling */
+    .dashboard-header {
+        padding: 2rem 0;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        color: white;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .info-card { background: var(--primary-gradient); }
+    .success-card { background: var(--success-gradient); }
+    .warning-card { background: var(--warning-gradient); }
+    .danger-card { background: var(--danger-gradient); }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+
+    .card-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        opacity: 0.9;
+    }
+
+    .card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Search and Filter */
+    .search-filter-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        z-index: 3;
+    }
+
+    .search-input {
+        padding-left: 45px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .filter-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .filter-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Premium Table */
+    .premium-table-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-header h4 {
+        margin: 0;
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-export {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        color: #6c757d;
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-export:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    /* Table Styling */
+    .table {
+        margin: 0;
+    }
+
+    .table th {
+        border: none;
+        background: #f8f9fa;
+        padding: 1rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .table td {
+        border: none;
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    .sortable {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+
+    .sortable:hover {
+        background: #e9ecef;
+    }
+
+    /* Member Row Styling */
+    .member-row {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f1f3f4;
+    }
+
+    .member-row:hover {
+        background: #f8f9fa;
+        transform: scale(1.01);
+    }
+
+    .member-id {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .member-name {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .member-email {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .physical-data {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .data-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    /* BMI Styling */
+    .bmi-indicator {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .bmi-value {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .bmi-category {
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-align: center;
+        color: white;
+    }
+
+    .bmi-underweight { background: #f39c12; }
+    .bmi-normal { background: #27ae60; }
+    .bmi-overweight { background: #e74c3c; }
+
+    /* Membership Styling */
+    .membership-info .end-date {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .membership-type {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    /* Days Remaining */
+    .days-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .days-success { background: #d4edda; color: #155724; }
+    .days-warning { background: #fff3cd; color: #856404; }
+    .days-danger { background: #f8d7da; color: #721c24; }
+    .days-expired { background: #6c757d; color: white; }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit { background: #e3f2fd; color: #1976d2; }
+    .btn-view { background: #e8f5e8; color: #2e7d32; }
+    .btn-delete { background: #ffebee; color: #c62828; }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-edit:hover { background: #1976d2; color: white; }
+    .btn-view:hover { background: #2e7d32; color: white; }
+    .btn-delete:hover { background: #c62828; color: white; }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+
+    .empty-state i {
+        color: #dee2e6;
+    }
+
+    /* Modal Styling */
+    .premium-modal {
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--hover-shadow);
+    }
+
+    .modal-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+
+    .modal-icon.danger {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .table-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .table-actions {
+            justify-content: center;
+        }
+
+        .physical-data {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .action-buttons {
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Interactive JavaScript -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Set BMI Badge Colors Dynamically
-        document.querySelectorAll('.bmi-badge').forEach(function (badge) {
-            let bmiValue = parseFloat(badge.getAttribute("data-bmi"));
-            if (bmiValue < 18.5) {
-                badge.style.backgroundColor = "#f39c12";
-            } else if (bmiValue >= 18.5 && bmiValue <= 24.9) {
-                badge.style.backgroundColor = "#2ecc71";
-            } else {
-                badge.style.backgroundColor = "#e74c3c";
-            }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
-        // Delete Functionality
-        document.querySelectorAll('.delete-btn').forEach(button => {
+        // Calculate and update BMI categories and status badges
+        function updateBMICategories() {
+            const bmiIndicators = document.querySelectorAll('.bmi-category');
+            
+            bmiIndicators.forEach(indicator => {
+                const bmiValue = parseFloat(indicator.parentElement.querySelector('.bmi-value').textContent);
+                let category = '';
+                let categoryClass = '';
+                
+                if (bmiValue < 18.5) {
+                    category = 'Underweight';
+                    categoryClass = 'bmi-underweight';
+                } else if (bmiValue >= 18.5 && bmiValue <= 24.9) {
+                    category = 'Normal';
+                    categoryClass = 'bmi-normal';
+                } else {
+                    category = 'Overweight';
+                    categoryClass = 'bmi-overweight';
+                }
+                
+                indicator.textContent = category;
+                indicator.className = 'bmi-category ' + categoryClass;
+            });
+        }
+
+        // Update days remaining badges
+        function updateDaysBadges() {
+            const daysBadges = document.querySelectorAll('.days-badge');
+            let activeCount = 0;
+            let expiringCount = 0;
+            let expiredCount = 0;
+            
+            daysBadges.forEach(badge => {
+                const days = parseInt(badge.getAttribute('data-days'));
+                let statusClass = '';
+                
+                if (days <= 0) {
+                    statusClass = 'days-expired';
+                    expiredCount++;
+                } else if (days < 7) {
+                    statusClass = 'days-warning';
+                    expiringCount++;
+                } else {
+                    statusClass = 'days-success';
+                    activeCount++;
+                }
+                
+                badge.className = 'days-badge ' + statusClass;
+                
+                // Update badge text for expired members
+                if (days <= 0) {
+                    badge.textContent = 'Expired';
+                } else {
+                    badge.textContent = days + ' Days';
+                }
+            });
+            
+            // Update stat cards
+            document.getElementById('active-members-count').textContent = activeCount;
+            document.getElementById('expiring-soon-count').textContent = expiringCount;
+            document.getElementById('expired-count').textContent = expiredCount;
+        }
+
+        // Initialize BMI and days badges
+        updateBMICategories();
+        updateDaysBadges();
+
+        // Search functionality with debouncing
+        let searchTimeout;
+        const searchInput = document.getElementById('search-input');
+        const searchLoader = document.querySelector('.search-loader');
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchLoader.classList.remove('d-none');
+            
+            searchTimeout = setTimeout(() => {
+                searchMembers();
+                searchLoader.classList.add('d-none');
+            }, 500);
+        });
+
+        // Filter functionality
+        const statusFilter = document.getElementById('status-filter');
+        const bmiFilter = document.getElementById('bmi-filter');
+
+        [statusFilter, bmiFilter].forEach(filter => {
+            filter.addEventListener('change', filterMembers);
+        });
+
+        // Sort functionality
+        const sortableHeaders = document.querySelectorAll('.sortable');
+        sortableHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const sortBy = this.dataset.sort;
+                sortMembers(sortBy);
+            });
+        });
+
+        // Delete functionality
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteMemberPreview = document.getElementById('deleteMemberPreview');
+
+        deleteButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const memberId = this.dataset.memberId;
-                const deleteUrl = `/members/delete/${memberId}/`;  // Correct URL pattern
-                const form = document.getElementById('deleteForm');
-                form.action = deleteUrl;
-                new bootstrap.Modal(document.getElementById('deleteModal')).show();
+                const memberName = this.dataset.memberName;
+                
+                // Set form action
+                deleteForm.action = `/members/delete/${memberId}/`;
+                
+                // Update preview
+                deleteMemberPreview.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="member-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                             style="width: 40px; height: 40px;">
+                            ${memberName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <strong>${memberName}</strong>
+                            <div class="text-muted">Member ID: #${memberId}</div>
+                        </div>
+                    </div>
+                `;
+                
+                deleteModal.show();
             });
+        });
+
+        // Export functionality
+        document.getElementById('export-btn').addEventListener('click', function() {
+            // Implement export logic here
+            const btn = this;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-download me-2"></i>Export';
+                btn.disabled = false;
+                showNotification('Export completed successfully!', 'success');
+            }, 2000);
+        });
+
+        function searchMembers() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll('.member-row');
+            
+            rows.forEach(row => {
+                const name = row.querySelector('.member-name').textContent.toLowerCase();
+                const email = row.querySelector('.member-email').textContent.toLowerCase();
+                const memberId = row.querySelector('.member-id').textContent.toLowerCase();
+                
+                const matchesSearch = name.includes(searchTerm) || 
+                                   email.includes(searchTerm) || 
+                                   memberId.includes(searchTerm);
+                
+                row.style.display = matchesSearch ? '' : 'none';
+            });
+        }
+
+        function filterMembers() {
+            const statusValue = statusFilter.value;
+            const bmiValue = bmiFilter.value;
+            const rows = document.querySelectorAll('.member-row');
+            
+            rows.forEach(row => {
+                const daysRemaining = parseInt(row.getAttribute('data-days-remaining'));
+                const bmiCategory = row.querySelector('.bmi-category').textContent.toLowerCase();
+                
+                // Determine status
+                let rowStatus = '';
+                if (daysRemaining <= 0) rowStatus = 'expired';
+                else if (daysRemaining < 7) rowStatus = 'expiring';
+                else rowStatus = 'active';
+                
+                // Determine BMI category for filtering
+                let rowBMICategory = '';
+                if (bmiCategory === 'underweight') rowBMICategory = 'underweight';
+                else if (bmiCategory === 'normal') rowBMICategory = 'normal';
+                else if (bmiCategory === 'overweight') rowBMICategory = 'overweight';
+                
+                const statusMatch = !statusValue || rowStatus === statusValue;
+                const bmiMatch = !bmiValue || rowBMICategory === bmiValue;
+                
+                row.style.display = (statusMatch && bmiMatch) ? '' : 'none';
+            });
+        }
+
+        function sortMembers(sortBy) {
+            // Implement sorting logic based on sortBy parameter
+            console.log('Sorting by:', sortBy);
+            showNotification(`Sorted by ${sortBy}`, 'info');
+        }
+
+        function showNotification(message, type) {
+            // Remove existing notifications
+            document.querySelectorAll('.alert.position-fixed').forEach(alert => alert.remove());
+            
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Add animation to table rows
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.member-row').forEach(row => {
+            observer.observe(row);
         });
     });
 
-    function searchMembers() {
-        let input = document.getElementById("search-input").value.toLowerCase();
-        let rows = document.querySelectorAll("#members-table tbody tr");
-
-        rows.forEach(row => {
-            let name = row.cells[1].textContent.toLowerCase();
-            row.style.display = name.includes(input) ? "" : "none";
-        });
-    }
+    // Add CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .member-row {
+            opacity: 0;
+        }
+        
+        .search-loader {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 {% endblock %}
