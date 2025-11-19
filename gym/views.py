@@ -125,3 +125,6 @@ def add_member(request):
 
     return render(request, 'edit_member.html', {'form': form})
 
+def contact_list(request):
+    contacts = ContactForm.objects.all().order_by('-created_at')
+    return render(request, 'contact_list.html', {'contacts': contacts})
