@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from .models import ContactForm
+from gym.forms import MemberForm
+from .models import ContactForm, Member
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
