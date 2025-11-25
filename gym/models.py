@@ -38,3 +38,13 @@ def days_remaining(self):
 
 def _str_(self):
     return f"{self.user.get_full_name()} ({self.biometric_id})"
+
+
+class Trainer(models.Model):
+    name = models.CharField(max_length=100)
+    specialization = models.CharField(max_length=100)
+    schedule = models.CharField(max_length=100)
+    contact = models.CharField(max_length=15)
+
+    def _str_(self):
+        return self.name
