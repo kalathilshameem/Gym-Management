@@ -151,3 +151,14 @@ def manage_trainers(request):
                 member.save()
             messages.success(request, 'Assignments updated successfully!')
             return redirect('trainers_list')
+
+    # GET request or invalid form
+    trainers = Trainer.objects.prefetch_related('member_set').all()
+    members = Member.objects.all()
+    form = TrainerForm()  # Empty form for adding new trainers
+
+    return render(request, 'trainers_list.html', {
+        'trainers': trainers,
+        'members': members,
+        'form': form
+    })
