@@ -128,3 +128,26 @@ def add_member(request):
 def contact_list(request):
     contacts = ContactForm.objects.all().order_by('-created_at')
     return render(request, 'contact_list.html', {'contacts': contacts})
+
+
+def manage_trainers(request):
+    # Handle form submission
+    if request.method == 'POST':
+        # Check which form was submitted
+        if 'add_trainer' in request.POST:
+            form = TrainerForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Trainer added successfully!')
+                return redirect('trainers_list')
+        elif 'assign_trainer' in request.POST:
+            trainer_id = request.POST.get('trainer_id')
+            trainer = get_object_or_404(Trainer, id=trainer_id)
+            members = request.POST.getlist('members')
+            trainer.member_set.clear()
+            for member_id in members:
+                member = Member.objects.get(id=member_id)
+                member.trainer = trainer
+                member.save()
+            messages.success(request, 'Assignments updated successfully!')
+            return redirect('trainers_list')
