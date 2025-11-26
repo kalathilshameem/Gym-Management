@@ -49,7 +49,7 @@
                     <ul>
                         <li><a href="{% url 'index' %}">Home</a></li>
                         <li><a href="{% url 'about' %}">About Us</a></li>
-                        <li><a href="{% url 'services' %}">Services</a></li>
+                        <li class="active"><a href="{% url 'services' %}">Services</a></li>
                         {% if user.is_authenticated %}
                             <li class="active"><a href="{% url 'bmi_calculator_user' %}">BMI Calculator</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
