@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center fw-bold text-primary mb-4">
+        <i class="fas fa-weight"></i> BMI Calculator
+    </h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body">
+                    <form id="bmi-form">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-ruler"></i> Height (in meters)</label>
+                            <input type="number" step="0.01" id="height" class="form-control" required placeholder="Enter height in meters">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-weight"></i> Weight (in kg)</label>
+                            <input type="number" step="0.1" id="weight" class="form-control" required placeholder="Enter weight in kg">
+                        </div>
+
+                        <button type="button" class="btn btn-primary w-100 animated-btn" onclick="calculateBMI()">
+                            <i class="fas fa-calculator"></i> Calculate BMI
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- BMI Result -->
+            <div class="mt-4 text-center" id="bmi-result" style="display: none;">
+                <h3 class="fw-bold">Your BMI: <span id="bmi-value"></span></h3>
+                <p class="badge" id="bmi-category"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    /* Form Card */
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    /* Input Fields */
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 1rem;
+        border: 2px solid #ddd;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    /* Button Styling */
+    .animated-btn {
+        background: linear-gradient(135deg, #ff6600, #ff4500);
+        border: none;
+        font-size: 1.2rem;
+        padding: 12px;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        border-radius: 8px;
+    }
+
+    .animated-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 5px 15px rgba(255, 69, 0, 0.5);
+    }
+
+    /* BMI Category Badge */
+    .badge {
+        font-size: 1.2rem;
+        padding: 10px;
+        border-radius: 8px;
+    }
+</style>
+
+<!-- JavaScript for BMI Calculation -->
+<script>
+    function calculateBMI() {
+        let height = parseFloat(document.getElementById("height").value);
+        let weight = parseFloat(document.getElementById("weight").value);
+
+        if (height > 0 && weight > 0) {
+            let bmi = (weight / (height * height)).toFixed(2);
+            let category = "";
+            let badgeColor = "";
+
+            if (bmi < 18.5) {
+                category = "Underweight";
+                badgeColor = "bg-warning text-dark";
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                category = "Normal Weight";
+                badgeColor = "bg-success";
+            } else if (bmi >= 25 && bmi <= 29.9) {
+                category = "Overweight";
+                badgeColor = "bg-danger";
+            } else {
+                category = "Obese";
+                badgeColor = "bg-dark text-white";
+            }
+
+            document.getElementById("bmi-value").innerText = bmi;
+            let categoryBadge = document.getElementById("bmi-category");
+            categoryBadge.innerText = category;
+            categoryBadge.className = "badge " + badgeColor;
+
+            document.getElementById("bmi-result").style.display = "block";
+        } else {
+            alert("Please enter valid height and weight!");
+        }
+    }
+</script>
+
+{% endblock %}
