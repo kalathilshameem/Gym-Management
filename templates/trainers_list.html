@@ -1,183 +1,1242 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center fw-bold text-primary mb-4">
-        <i class="fas fa-users-cog"></i> Trainer Management
-    </h2>
+<div class="container-fluid px-4 py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="dashboard-header text-center">
+                <h1 class="display-5 fw-bold gradient-text mb-3">
+                    <i class="fas fa-users-cog me-3"></i>Trainer Management
+                </h1>
+                <p class="text-muted fs-5"></p>
+            </div>
+        </div>
+    </div>
 
-    <div class="row">
+    <div class="row g-4">
         <!-- Add Trainer Form -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-lg p-4">
-                <h4 class="fw-bold text-center mb-3">
-                    <i class="fas fa-user-plus"></i> Add New Trainer
-                </h4>
-                <form method="post">
+        <div class="col-xl-4 col-lg-5">
+            <div class="premium-form-card">
+                <div class="form-header">
+                    <div class="header-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Add New Trainer</h3>
+                    <p>Register a new trainer to your team</p>
+                </div>
+
+                <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="add_trainer" value="1">
 
                     {% if form.errors %}
-                    <div class="alert alert-danger">
-                        {% for field, errors in form.errors.items %}
-                            {% for error in errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        {% endfor %}
+                    <div class="alert-premium error">
+                        <div class="alert-content">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>
+                                <h6>Please fix the following errors:</h6>
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <p class="mb-0">{{ error }}</p>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                     {% endif %}
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold"><i class="fas fa-user"></i> Full Name</label>
-                        {{ form.name }}
-                    </div>
+                    <div class="form-body">
+                        <div class="form-group floating-label">
+                            {{ form.name }}
+                            <label class="floating-label-text">
+                                <i class="fas fa-user me-2"></i>Full Name
+                            </label>
+                            <div class="form-helper">Enter trainer's full name</div>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold"><i class="fas fa-dumbbell"></i> Specialization</label>
-                        {{ form.specialization }}
-                    </div>
+                        <div class="form-group floating-label">
+                            {{ form.specialization }}
+                            <label class="floating-label-text">
+                                <i class="fas fa-dumbbell me-2"></i>Specialization
+                            </label>
+                            <div class="form-helper">Primary training expertise</div>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold"><i class="fas fa-calendar-alt"></i> Schedule</label>
-                        {{ form.schedule }}
-                    </div>
+                        <div class="form-group floating-label">
+                            {{ form.schedule }}
+                            <label class="floating-label-text">
+                                <i class="fas fa-calendar-alt me-2"></i>Schedule
+                            </label>
+                            <div class="form-helper">Working hours and availability</div>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold"><i class="fas fa-phone-alt"></i> Contact</label>
-                        {{ form.contact }}
-                    </div>
+                        <div class="form-group floating-label">
+                            {{ form.contact }}
+                            <label class="floating-label-text">
+                                <i class="fas fa-phone-alt me-2"></i>Contact Number
+                            </label>
+                            <div class="form-helper">Primary contact information</div>
+                        </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-save"></i> Add Trainer
-                    </button>
+                        <button type="submit" class="btn btn-premium w-100">
+                            <i class="fas fa-save me-2"></i>Add Trainer
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
 
         <!-- Trainers List -->
-        <div class="col-md-8">
-            <!-- Search Bar -->
-            <div class="row justify-content-center mb-3">
-                <div class="col-md-12">
-                    <input type="text" id="search-input" class="form-control" placeholder="🔍 Search trainer by name..." onkeyup="searchTrainers()">
+        <div class="col-xl-8 col-lg-7">
+            <!-- Stats Overview -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card info-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between p-2">
+                                <div>
+                                    <h3 class="card-title">Total Trainers</h3>
+                                    <h2 class="card-value">{{ trainers|length }}</h2>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-users-cog"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card success-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between p-2">
+                                <div>
+                                    <h3 class="card-title">Active Assignments</h3>
+                                    <h2 class="card-value" id="active-assignments">0</h2>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-link"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card warning-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between p-2">
+                                <div>
+                                    <h3 class="card-title">Available</h3>
+                                    <h2 class="card-value" id="available-trainers">0</h2>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-filter-card mb-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-8">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="search-input" class="form-control search-input" 
+                                   placeholder="Search trainers by name, specialization, or contact...">
+                            <div class="search-loader d-none">
+                                <div class="spinner-border spinner-border-sm" role="status"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select filter-select" id="specialization-filter">
+                            <option value="">All Specializations</option>
+                            <option value="Personal Training">Personal Training</option>
+                            <option value="Yoga">Yoga</option>
+                            <option value="CrossFit">CrossFit</option>
+                            <option value="Weightlifting">Weightlifting</option>
+                            <option value="Cardio">Cardio</option>
+                            <option value="Nutrition">Nutrition</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <!-- Trainers Table -->
-            <div class="table-responsive">
-                <table class="table table-bordered text-center" id="trainers-table">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Name</th>
-                            <th>Specialization</th>
-                            <th>Schedule</th>
-                            <th>Contact</th>
-                            <th>Assigned Members</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for trainer in trainers %}
-                        <tr class="animate-row">
-                            <td class="fw-bold">{{ trainer.name }}</td>
-                            <td>{{ trainer.specialization }}</td>
-                            <td>{{ trainer.schedule }}</td>
-                            <td>{{ trainer.contact }}</td>
-                            <td>
-                                {% for member in trainer.member_set.all %}
-                                <span class="badge bg-primary">{{ member.name }}</span>
-                                {% empty %}
-                                <span class="text-muted">No assignments</span>
-                                {% endfor %}
-                            </td>
-                            <td>
-                                <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ trainer.id }}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#assignModal{{ trainer.id }}">
-                                    <i class="fas fa-link"></i>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Delete Modal -->
-                        <div class="modal fade" id="deleteModal{{ trainer.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form method="post" action="{% url 'delete_trainer' trainer.id %}">
-                                        {% csrf_token %}
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Confirm Delete</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="premium-table-card">
+                <div class="table-header">
+                    <h4><i class="fas fa-list me-2"></i>Trainers List</h4>
+                    <div class="table-actions">
+                        <button class="btn btn-export" id="export-btn">
+                            <i class="fas fa-download me-2"></i>Export
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover" id="trainers-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="name">
+                                    Trainer <i class="fas fa-sort"></i>
+                                </th>
+                                <th class="sortable" data-sort="specialization">
+                                    Specialization <i class="fas fa-sort"></i>
+                                </th>
+                                <th>Schedule</th>
+                                <th>Contact</th>
+                                <th class="sortable" data-sort="members">
+                                    Assigned Members <i class="fas fa-sort"></i>
+                                </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trainer in trainers %}
+                            <tr class="trainer-row" data-trainer-id="{{ trainer.id }}" 
+                                data-specialization="{{ trainer.specialization }}">
+                                <td>
+                                    <div class="trainer-info">
+                                        <div class="trainer-name">{{ trainer.name }}</div>
+                                        <div class="trainer-id">ID: #{{ trainer.id }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="specialization-badge">
+                                        <i class="fas fa-dumbbell me-2"></i>
+                                        {{ trainer.specialization }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="schedule-info">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <span>{{ trainer.schedule }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="contact-info">
+                                        <i class="fas fa-phone me-2"></i>
+                                        {{ trainer.contact }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="members-assigned">
+                                        {% for member in trainer.member_set.all %}
+                                        <div class="member-tag" data-member-id="{{ member.id }}">
+                                            <span class="member-name">{{ member.name }}</span>
+                                            <button class="btn-unassign" data-member-id="{{ member.id }}" 
+                                                    data-trainer-id="{{ trainer.id }}">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </div>
-                                        <div class="modal-body">
-                                            Delete {{ trainer.name }} permanently?
+                                        {% empty %}
+                                        <div class="no-assignments">
+                                            <i class="fas fa-users-slash"></i>
+                                            <span>No assignments</span>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Assign Modal -->
-                        <div class="modal fade" id="assignModal{{ trainer.id }}" tabindex="-1" aria-labelledby="assignModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="assign_trainer" value="1">
-                                        <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Assign Members to {{ trainer.name }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <select name="members" class="form-select" multiple size="5">
-                                                {% for member in members %}
-                                                <option value="{{ member.id }}" {% if member in trainer.member_set.all %}selected{% endif %}>
-                                                    {{ member.name }} ({{ member.membership_end }})
-                                                </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Save Assignments</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-muted">No trainers found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'edit_trainer' trainer.id %}" class="btn-action btn-edit" 
+                                           data-bs-toggle="tooltip" title="Edit Trainer">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn-action btn-assign assign-btn" 
+                                                data-trainer-id="{{ trainer.id }}"
+                                                data-trainer-name="{{ trainer.name }}"
+                                                data-bs-toggle="tooltip" title="Assign Members">
+                                            <i class="fas fa-link"></i>
+                                        </button>
+                                        <button class="btn-action btn-delete delete-btn" 
+                                                data-trainer-id="{{ trainer.id }}"
+                                                data-trainer-name="{{ trainer.name }}"
+                                                data-bs-toggle="tooltip" title="Delete Trainer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">
+                                        <i class="fas fa-users-cog fa-3x mb-3"></i>
+                                        <h4>No Trainers Found</h4>
+                                        <p>Get started by adding your first trainer.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript -->
-<script>
-    function searchTrainers() {
-        let input = document.getElementById("search-input").value.toLowerCase();
-        let rows = document.querySelectorAll("#trainers-table tbody tr");
+<!-- Assign Members Modal -->
+<div class="modal fade" id="assignModal" tabindex="-1" aria-labelledby="assignModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content premium-modal">
+            <div class="modal-header">
+                <div class="modal-icon primary">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h5 class="modal-title" id="assignModalTitle">Assign Members</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" id="assignForm">
+                {% csrf_token %}
+                <input type="hidden" name="assign_trainer" value="1">
+                <input type="hidden" name="trainer_id" id="assignTrainerId">
+                
+                <div class="modal-body">
+                    <div class="assign-container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Available Members</h6>
+                                <div class="members-list" id="availableMembers">
+                                    {% for member in members %}
+                                    <div class="member-item" data-member-id="{{ member.id }}">
+                                        <div class="member-info">
+                                            <div class="member-name">{{ member.name }}</div>
+                                            <div class="member-details">
+                                                <span class="membership-end">{{ member.membership_end }}</span>
+                                                <span class="bmi">{{ member.bmi }}</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-add-member" data-member-id="{{ member.id }}">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Selected Members</h6>
+                                <div class="selected-members" id="selectedMembers">
+                                    <!-- Selected members will appear here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Assignments
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-        rows.forEach(row => {
-            if(row.querySelector('td')) {
-                let name = row.querySelector('td:first-child').textContent.toLowerCase();
-                row.style.display = name.includes(input) ? "" : "none";
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content premium-modal">
+            <div class="modal-header">
+                <div class="modal-icon danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h5 class="modal-title">Delete Trainer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this trainer? This action cannot be undone.</p>
+                <div class="trainer-preview" id="deleteTrainerPreview"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" id="deleteForm" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Trainer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Premium Styling -->
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        --hover-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Header Styling */
+    .dashboard-header {
+        padding: 2rem 0;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Premium Form Card */
+    .premium-form-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: fit-content;
+    }
+
+    .premium-form-card:hover {
+        box-shadow: var(--hover-shadow);
+    }
+
+    .form-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+
+    .form-header h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .floating-label {
+        position: relative;
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1rem 1rem 0.5rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        height: auto;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        padding-top: 1.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .floating-label-text {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        background: linear-gradient(transparent 50%, #f8f9fa 50%);
+        padding: 0 0.25rem;
+    }
+
+    .form-control:focus + .floating-label-text,
+    .form-control:not(:placeholder-shown) + .floating-label-text {
+        top: 0.5rem;
+        font-size: 0.75rem;
+        color: #667eea;
+        font-weight: 600;
+    }
+
+    .form-control:focus + .floating-label-text {
+        background: linear-gradient(transparent 50%, white 50%);
+    }
+
+    .form-helper {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+        padding: 0 1rem;
+    }
+
+    /* Premium Button */
+    .btn-premium {
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        padding: 1rem 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        color: white;
+        margin-bottom: 1rem;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .info-card { background: var(--primary-gradient); }
+    .success-card { background: var(--success-gradient); }
+    .warning-card { background: var(--warning-gradient); }
+
+    .stat-icon {
+        font-size: 2rem;
+        opacity: 0.8;
+    }
+
+    .card-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        opacity: 0.9;
+    }
+
+    .card-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Search and Filter */
+    .search-filter-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        z-index: 3;
+    }
+
+    .search-input {
+        padding-left: 45px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .filter-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    /* Premium Table */
+    .premium-table-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-header h4 {
+        margin: 0;
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-export {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        color: #6c757d;
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-export:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    /* Table Styling */
+    .table {
+        margin: 0;
+    }
+
+    .table th {
+        border: none;
+        background: #f8f9fa;
+        padding: 1rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .table td {
+        border: none;
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    .sortable {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+
+    .sortable:hover {
+        background: #e9ecef;
+    }
+
+    /* Trainer Row Styling */
+    .trainer-row {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f1f3f4;
+    }
+
+    .trainer-row:hover {
+        background: #f8f9fa;
+    }
+
+    .trainer-name {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .trainer-id {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .specialization-badge {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .schedule-info, .contact-info {
+        display: flex;
+        align-items: center;
+        color: #6c757d;
+    }
+
+    /* Members Assigned */
+    .members-assigned {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 200px;
+    }
+
+    .member-tag {
+        background: #e8f5e8;
+        color: #2e7d32;
+        padding: 0.5rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.875rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        animation: slideIn 0.3s ease;
+    }
+
+    .btn-unassign {
+        background: none;
+        border: none;
+        color: #c62828;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-unassign:hover {
+        background: #c62828;
+        color: white;
+    }
+
+    .no-assignments {
+        color: #6c757d;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit { background: #e3f2fd; color: #1976d2; }
+    .btn-assign { background: #e8f5e8; color: #2e7d32; }
+    .btn-delete { background: #ffebee; color: #c62828; }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-edit:hover { background: #1976d2; color: white; }
+    .btn-assign:hover { background: #2e7d32; color: white; }
+    .btn-delete:hover { background: #c62828; color: white; }
+
+    /* Modal Styling */
+    .premium-modal {
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--hover-shadow);
+    }
+
+    .modal-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+
+    .modal-icon.primary { background: #e3f2fd; color: #1976d2; }
+    .modal-icon.danger { background: #ffebee; color: #c62828; }
+
+    /* Assign Modal Specific */
+    .assign-container {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .members-list, .selected-members {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .member-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .member-item:hover {
+        background: #e9ecef;
+    }
+
+    .member-info {
+        flex-grow: 1;
+    }
+
+    .member-name {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .member-details {
+        font-size: 0.875rem;
+        color: #6c757d;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-add-member {
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add-member:hover {
+        background: #218838;
+        transform: scale(1.1);
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .table-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .members-assigned {
+            max-width: 150px;
+        }
+
+        .assign-container .row {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- Interactive JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Calculate stats
+        function updateStats() {
+            const totalAssignments = document.querySelectorAll('.member-tag').length;
+            const totalTrainers = document.querySelectorAll('.trainer-row').length;
+            const availableTrainers = document.querySelectorAll('.trainer-row').length; // Simplified calculation
+            
+            document.getElementById('active-assignments').textContent = totalAssignments;
+            document.getElementById('available-trainers').textContent = availableTrainers;
+        }
+
+        // Initialize stats
+        updateStats();
+
+        // Search functionality with debouncing
+        let searchTimeout;
+        const searchInput = document.getElementById('search-input');
+        const searchLoader = document.querySelector('.search-loader');
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchLoader.classList.remove('d-none');
+            
+            searchTimeout = setTimeout(() => {
+                searchTrainers();
+                searchLoader.classList.add('d-none');
+            }, 500);
+        });
+
+        // Filter functionality
+        const specializationFilter = document.getElementById('specialization-filter');
+        specializationFilter.addEventListener('change', filterTrainers);
+
+        // Delete functionality
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteTrainerPreview = document.getElementById('deleteTrainerPreview');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const trainerId = this.dataset.trainerId;
+                const trainerName = this.dataset.trainerName;
+                
+                // Set form action
+                deleteForm.action = `/trainers/delete/${trainerId}/`;
+                
+                // Update preview
+                deleteTrainerPreview.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="trainer-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                             style="width: 40px; height: 40px;">
+                            ${trainerName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <strong>${trainerName}</strong>
+                            <div class="text-muted">Trainer ID: #${trainerId}</div>
+                        </div>
+                    </div>
+                `;
+                
+                deleteModal.show();
+            });
+        });
+
+        // Assign functionality
+        const assignButtons = document.querySelectorAll('.assign-btn');
+        const assignModal = new bootstrap.Modal(document.getElementById('assignModal'));
+        const assignForm = document.getElementById('assignForm');
+        const assignTrainerId = document.getElementById('assignTrainerId');
+        const assignModalTitle = document.getElementById('assignModalTitle');
+        const availableMembers = document.getElementById('availableMembers');
+        const selectedMembers = document.getElementById('selectedMembers');
+
+        assignButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const trainerId = this.dataset.trainerId;
+                const trainerName = this.dataset.trainerName;
+                
+                // Set form data
+                assignTrainerId.value = trainerId;
+                assignModalTitle.textContent = `Assign Members to ${trainerName}`;
+                
+                // Clear previous selections
+                selectedMembers.innerHTML = '';
+                
+                // Get currently assigned members for this trainer
+                const currentTrainerRow = document.querySelector(`.trainer-row[data-trainer-id="${trainerId}"]`);
+                const assignedMemberIds = Array.from(currentTrainerRow.querySelectorAll('.member-tag')).map(tag => 
+                    tag.getAttribute('data-member-id')
+                );
+                
+                // Populate selected members
+                assignedMemberIds.forEach(memberId => {
+                    const memberItem = availableMembers.querySelector(`.member-item[data-member-id="${memberId}"]`);
+                    if (memberItem) {
+                        addToSelectedMembers(memberItem.cloneNode(true));
+                    }
+                });
+                
+                assignModal.show();
+            });
+        });
+
+        // Add member to selected list
+        availableMembers.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-add-member') || e.target.closest('.btn-add-member')) {
+                const btn = e.target.classList.contains('btn-add-member') ? e.target : e.target.closest('.btn-add-member');
+                const memberItem = btn.closest('.member-item');
+                addToSelectedMembers(memberItem.cloneNode(true));
             }
         });
-    }
+
+        function addToSelectedMembers(memberItem) {
+            const memberId = memberItem.getAttribute('data-member-id');
+            
+            // Remove add button and add remove button
+            const addBtn = memberItem.querySelector('.btn-add-member');
+            addBtn.remove();
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn-remove-member';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.type = 'button';
+            removeBtn.addEventListener('click', function() {
+                memberItem.remove();
+            });
+            
+            memberItem.appendChild(removeBtn);
+            selectedMembers.appendChild(memberItem);
+            
+            // Create hidden input for form submission
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'members';
+            hiddenInput.value = memberId;
+            assignForm.appendChild(hiddenInput);
+        }
+
+        // Unassign member
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-unassign') || e.target.closest('.btn-unassign')) {
+                const btn = e.target.classList.contains('btn-unassign') ? e.target : e.target.closest('.btn-unassign');
+                const memberId = btn.getAttribute('data-member-id');
+                const trainerId = btn.getAttribute('data-trainer-id');
+                
+                if (confirm('Are you sure you want to unassign this member?')) {
+                    // Send AJAX request to unassign
+                    unassignMember(memberId, trainerId, btn.closest('.member-tag'));
+                }
+            }
+        });
+
+        function unassignMember(memberId, trainerId, element) {
+            // Simulate AJAX request
+            console.log(`Unassigning member ${memberId} from trainer ${trainerId}`);
+            
+            // Remove from UI
+            element.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                element.remove();
+                updateStats();
+            }, 300);
+        }
+
+        function searchTrainers() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll('.trainer-row');
+            
+            rows.forEach(row => {
+                const name = row.querySelector('.trainer-name').textContent.toLowerCase();
+                const specialization = row.querySelector('.specialization-badge').textContent.toLowerCase();
+                const contact = row.querySelector('.contact-info').textContent.toLowerCase();
+                
+                const matchesSearch = name.includes(searchTerm) || 
+                                   specialization.includes(searchTerm) || 
+                                   contact.includes(searchTerm);
+                
+                row.style.display = matchesSearch ? '' : 'none';
+            });
+        }
+
+        function filterTrainers() {
+            const specializationValue = specializationFilter.value;
+            const rows = document.querySelectorAll('.trainer-row');
+            
+            rows.forEach(row => {
+                const rowSpecialization = row.getAttribute('data-specialization');
+                
+                const specializationMatch = !specializationValue || rowSpecialization === specializationValue;
+                
+                row.style.display = specializationMatch ? '' : 'none';
+            });
+        }
+
+        // Export functionality
+        document.getElementById('export-btn').addEventListener('click', function() {
+            const btn = this;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-download me-2"></i>Export';
+                btn.disabled = false;
+                showNotification('Export completed successfully!', 'success');
+            }, 2000);
+        });
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                border-radius: 12px;
+                border: none;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            `;
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Add animation to table rows
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.trainer-row').forEach(row => {
+            observer.observe(row);
+        });
+    });
+
+    // Add CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+        }
+        
+        .trainer-row {
+            opacity: 0;
+        }
+        
+        .search-loader {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .btn-remove-member {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-remove-member:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+        
+        .alert-premium {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-premium.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .alert-content i {
+            font-size: 1.25rem;
+            margin-top: 0.125rem;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 {% endblock %}
