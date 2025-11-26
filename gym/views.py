@@ -17,7 +17,12 @@ def index(request):
 def about(request):
     return render(request, 'about-us.html')
 
+def bmi_calculator_user(request):
+    return render(request, 'bmi_calculator_user.html')
 
+def bmi_calculator(request):
+    return render(request, 'bmi_calculator.html')
+    
 def contact(request):
     return render(request, 'contact.html')
         
