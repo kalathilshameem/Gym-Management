@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import contact, contact_view, index,about, services
+from .views import contact, contact_view, index,about, services, bmi_calculator, bmi_calculator_user
 
 urlpatterns = [
     path('', index, name='index'),
