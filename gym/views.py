@@ -167,3 +167,42 @@ def manage_trainers(request):
         'members': members,
         'form': form
     })
+
+
+def edit_trainer(request, id):
+    trainer = get_object_or_404(Trainer, id=id)
+    if request.method == 'POST':
+        form = TrainerForm(request.POST, instance=trainer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Trainer updated successfully!')
+            return redirect('trainers_list')
+    else:
+        form = TrainerForm(instance=trainer)
+    return render(request, 'trainers.html', {'form': form})
+
+
+def delete_trainer(request, id):
+    trainer = get_object_or_404(Trainer, id=id)
+    if request.method == 'POST':
+        trainer.delete()
+        messages.success(request, 'Trainer deleted successfully!')
+    return redirect('trainers_list')
+
+def assign_trainer(request, id):
+    trainer = get_object_or_404(Trainer, id=id)
+    if request.method == 'POST':
+        members = request.POST.getlist('members')
+        trainer.member_set.clear()
+        for member_id in members:
+            member = Member.objects.get(id=member_id)
+            member.trainer = trainer
+            member.save()
+        messages.success(request, 'Assignments updated successfully!')
+    return redirect('trainers_list')
+
+def bmi_calculator_user(request):
+    return render(request, 'bmi_calculator_user.html')
+
+def bmi_calculator(request):
+    return render(request, 'bmi_calculator.html')
