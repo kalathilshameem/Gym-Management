@@ -209,7 +209,10 @@ def bmi_calculator(request):
 
 def workout_planner_user(request):
     workout = None
+    
     if request.method == 'POST':
         goal = request.POST.get('goal')
+        # Pass the goal to generate_workout
         workout = generate_workout(goal)
-    return render(request, 'workout_form_user.html', {'workout': workout})
+    
+    return render(request, 'workout_user.html', {'workout': workout})
