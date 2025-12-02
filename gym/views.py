@@ -208,6 +208,15 @@ def bmi_calculator_user(request):
 def bmi_calculator(request):
     return render(request, 'bmi_calculator.html')
 
+def workout_planner_user(request):
+    workout = None
+    
+    if request.method == 'POST':
+        goal = request.POST.get('goal')
+        # Pass the goal to generate_workout
+        workout = generate_workout(goal)
+    
+    return render(request, 'workout_user.html', {'workout': workout})
 def workout_planner(request):
     workout = None
     if request.method == 'POST':

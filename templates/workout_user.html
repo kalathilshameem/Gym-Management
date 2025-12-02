@@ -1,0 +1,602 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Gym Template">
+    <meta name="keywords" content="Gym, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Workout Generator - GymPro</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600,700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/flaticon.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/barfiller.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    
+    <style>
+        /* Workout Generator Specific Styles */
+        .workout-section {
+            padding: 80px 0;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .workout-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: none;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .workout-header {
+            background: #2d2d2d;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 4px solid #28a745;
+        }
+
+        .workout-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .workout-body {
+            padding: 40px;
+        }
+
+        .form-label {
+            color: #2d2d2d;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .form-select {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease-in-out;
+            background: #f8f9fa;
+        }
+
+        .form-select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            background: white;
+        }
+
+        .animated-btn {
+            background: #28a745;
+            border: none;
+            font-size: 1.2rem;
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .animated-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #28a745;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .result-title {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .result-duration {
+            color: #6c757d;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            color: #2d2d2d;
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .exercise-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .exercise-list li {
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-list li:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .nutrition-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .goal-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: #28a745;
+        }
+
+        /* Goal-specific colors */
+        .weight-loss { border-left-color: #dc3545 !important; }
+        .muscle-gain { border-left-color: #007bff !important; }
+        .weight-gain { border-left-color: #ffc107 !important; }
+        .endurance { border-left-color: #17a2b8 !important; }
+        .flexibility { border-left-color: #6f42c1 !important; }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .info-box h4 {
+            color: #2d2d2d;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .info-box p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .goal-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .goal-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .goal-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .goal-item.active {
+            background: #28a745;
+            color: white;
+        }
+
+        .goal-item h6 {
+            margin: 0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header Section Begin -->
+    <header class="header-section">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="logo">
+                        <a href="{% url 'index' %}">
+                            <img src="{% static 'img/logo.png' %}" alt="">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <nav class="nav-menu">
+                        <ul>
+                            <li><a href="{% url 'index' %}">Home</a></li>
+                            <li><a href="{% url 'bmi_calculator_user' %}">BMI Calculator</a></li>
+                            <li class="active"><a href="">Workout Generator</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                            {% else %}
+                                <li><a href="{% url 'register' %}">Register</a></li>
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'contact' %}">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="top-option">
+                        <div class="to-social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas-open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+    <!-- Header End -->
+<br>
+    <!-- Workout Generator Section Begin -->
+    <section class="workout-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <h1><i class="fas fa-dumbbell"></i> WORKOUT GENERATOR</h1>
+                            <p>Get Your Personalized Fitness Plan</p>
+                        </div>
+                        <div class="workout-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label class="form-label">
+                                        <i class="fas fa-bullseye goal-icon"></i> Select Your Fitness Goal
+                                    </label>
+                                    <select name="goal" class="form-select" required id="goalSelect">
+                                        <option value="" disabled selected>Choose your fitness goal...</option>
+                                        <option value="weight_loss" {% if goal == 'weight_loss' %}selected{% endif %}>Weight Loss</option>
+                                        <option value="muscle_gain" {% if goal == 'muscle_gain' %}selected{% endif %}>Muscle Gain</option>
+                                        <option value="weight_gain" {% if goal == 'weight_gain' %}selected{% endif %}>Weight Gain</option>
+                                        <option value="endurance" {% if goal == 'endurance' %}selected{% endif %}>Endurance Boost</option>
+                                        <option value="flexibility" {% if goal == 'flexibility' %}selected{% endif %}>Flexibility & Mobility</option>
+                                    </select>
+                                    <div class="form-text">Select your primary fitness objective</div>
+                                </div>
+                                
+                                <button type="submit" class="btn animated-btn">
+                                    <i class="fas fa-magic"></i> GENERATE WORKOUT PLAN
+                                </button>
+                            </form>
+
+                            {% if workout %}
+                            <div class="result-card">
+                                <h3 class="result-title"><i class="fas fa-fire-alt"></i> {{ workout.title }}</h3>
+                                <p class="result-duration">
+                                    <strong><i class="fas fa-clock"></i> Recommended Duration:</strong> {{ workout.duration }}
+                                </p>
+                                
+                                <div class="mb-4">
+                                    <h5 class="section-title">
+                                        <i class="fas fa-dumbbell"></i> Exercises Plan
+                                    </h5>
+                                    <ul class="exercise-list">
+                                        {% for exercise in workout.exercises %}
+                                        <li class="{{ goal }}"><i class="fas fa-check-circle text-success me-2"></i> {{ exercise }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h5 class="section-title">
+                                        <i class="fas fa-utensils"></i> Nutrition Guidelines
+                                    </h5>
+                                    <div class="nutrition-box">
+                                        {{ workout.nutrition }}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h5 class="section-title">
+                                        <i class="fas fa-lightbulb"></i> Pro Tips
+                                    </h5>
+                                    <div class="nutrition-box">
+                                        <ul>
+                                            {% if goal == 'weight_loss' %}
+                                                <li>Perform workouts 4-5 times per week</li>
+                                                <li>Combine with 30 minutes of daily cardio</li>
+                                                <li>Stay hydrated - drink 3-4 liters of water daily</li>
+                                                <li>Get 7-8 hours of quality sleep each night</li>
+                                            {% elif goal == 'muscle_gain' %}
+                                                <li>Focus on progressive overload - increase weight gradually</li>
+                                                <li>Rest 60-90 seconds between sets</li>
+                                                <li>Ensure proper form to prevent injuries</li>
+                                                <li>Get 8+ hours of sleep for muscle recovery</li>
+                                            {% elif goal == 'weight_gain' %}
+                                                <li>Eat 5-6 smaller meals throughout the day</li>
+                                                <li>Track your calorie intake consistently</li>
+                                                <li>Include healthy fats like nuts and avocados</li>
+                                                <li>Don't skip post-workout nutrition</li>
+                                            {% elif goal == 'endurance' %}
+                                                <li>Gradually increase intensity each week</li>
+                                                <li>Monitor your heart rate during training</li>
+                                                <li>Include active recovery days</li>
+                                                <li>Stay consistent with your training schedule</li>
+                                            {% elif goal == 'flexibility' %}
+                                                <li>Always warm up before stretching</li>
+                                                <li>Hold stretches for 30-45 seconds</li>
+                                                <li>Practice daily for best results</li>
+                                                <li>Breathe deeply during stretches</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-outline-success me-2" onclick="window.print()">
+                                        <i class="fas fa-print"></i> Print Plan
+                                    </button>
+                                    <button class="btn btn-outline-primary" onclick="saveWorkoutPlan()">
+                                        <i class="fas fa-save"></i> Save Plan
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="info-box">
+                        <h4><i class="fas fa-info-circle text-primary"></i> How Our Workout Generator Works</h4>
+                        <p>Our workout generator creates personalized fitness plans based on scientific principles and proven training methods. Each plan includes:</p>
+                        <ul class="exercise-list">
+                            <li><i class="fas fa-check text-success me-2"></i> <strong>Customized Exercise Selection:</strong> Tailored to your specific goal</li>
+                            <li><i class="fas fa-check text-success me-2"></i> <strong>Duration & Frequency:</strong> Optimal training schedule</li>
+                            <li><i class="fas fa-check text-success me-2"></i> <strong>Nutrition Guidance:</strong> Diet recommendations for your goal</li>
+                            <li><i class="fas fa-check text-success me-2"></i> <strong>Pro Tips:</strong> Expert advice for maximum results</li>
+                            <li><i class="fas fa-check text-success me-2"></i> <strong>Safety First:</strong> Injury prevention guidelines</li>
+                        </ul>
+                        <p class="mt-3 mb-0"><small><i class="fas fa-exclamation-triangle text-warning"></i> <strong>Note:</strong> Always consult with a fitness professional before starting any new workout program, especially if you have pre-existing health conditions. Individual results may vary.</small></p>
+                    </div>
+
+                    <!-- Quick Goal Preview -->
+                    <div class="info-box">
+                        <h4><i class="fas fa-bolt text-warning"></i> Quick Goal Overview</h4>
+                        <div class="goal-preview">
+                            <div class="goal-item weight-loss" onclick="selectGoal('weight_loss')">
+                                <h6><i class="fas fa-running"></i> Weight Loss</h6>
+                                <small>Burn fat, increase metabolism</small>
+                            </div>
+                            <div class="goal-item muscle-gain" onclick="selectGoal('muscle_gain')">
+                                <h6><i class="fas fa-dumbbell"></i> Muscle Gain</h6>
+                                <small>Build strength and size</small>
+                            </div>
+                            <div class="goal-item weight-gain" onclick="selectGoal('weight_gain')">
+                                <h6><i class="fas fa-weight"></i> Weight Gain</h6>
+                                <small>Healthy bulk and mass</small>
+                            </div>
+                            <div class="goal-item endurance" onclick="selectGoal('endurance')">
+                                <h6><i class="fas fa-tachometer-alt"></i> Endurance</h6>
+                                <small>Improve stamina and conditioning</small>
+                            </div>
+                            <div class="goal-item flexibility" onclick="selectGoal('flexibility')">
+                                <h6><i class="fas fa-spa"></i> Flexibility</h6>
+                                <small>Increase mobility and recovery</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Workout Generator Section End -->
+
+    <!-- Get In Touch Section Begin -->
+    <div class="gettouch-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="gt-text">
+                        <i class="fa fa-map-marker"></i>
+                        <p>333 Middle Winchendon Rd, Rindge,<br/> NH 03461</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="gt-text">
+                        <i class="fa fa-mobile"></i>
+                        <ul>
+                            <li>125-711-811</li>
+                            <li>125-668-886</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="gt-text email">
+                        <i class="fa fa-envelope"></i>
+                        <p>Support.gymcenter@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Get In Touch Section End -->
+
+    <!-- Footer Section Begin -->
+    <section class="footer-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="fs-about">
+                        <div class="fa-logo">
+                            <a href="#"><img src="{% static 'img/logo.png' %}" alt=""></a>
+                        </div>
+                        <p>Our gym offers a modern, welcoming space equipped with the latest fitness technology and expert guidance to help you reach your goals.</p>
+                        <div class="fa-social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa  fa-envelope-o"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="fs-widget">
+                        <h4>Tips & Guides</h4>
+                        <div class="fw-recent">
+                            <h6><a>Physical fitness may help prevent depression, anxiety</a></h6>
+                            <ul>
+                                <li>3 min read</li>
+                                <li>20 Comment</li>
+                            </ul>
+                        </div>
+                        <div class="fw-recent">
+                            <h6><a>Fitness: The best exercise to lose belly fat and tone up...</a></h6>
+                            <ul>
+                                <li>3 min read</li>
+                                <li>20 Comment</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="copyright-text">
+                        <p>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved <i class="fa fa-heart" aria-hidden="true"></i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
+    <script src="{% static 'js/jquery.barfiller.js' %}"></script>
+    <script src="{% static 'js/jquery.slicknav.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        // Function to select goal from quick preview
+        function selectGoal(goal) {
+            document.getElementById('goalSelect').value = goal;
+            
+            // Highlight selected goal
+            document.querySelectorAll('.goal-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        // Function to save workout plan
+        function saveWorkoutPlan() {
+            const workoutTitle = document.querySelector('.result-title').textContent;
+            const workoutDuration = document.querySelector('.result-duration').textContent;
+            
+            // Create a data object
+            const workoutData = {
+                title: workoutTitle,
+                duration: workoutDuration,
+                exercises: [],
+                nutrition: document.querySelector('.nutrition-box').textContent.trim(),
+                timestamp: new Date().toISOString()
+            };
+
+            // Collect exercises
+            document.querySelectorAll('.exercise-list li').forEach(item => {
+                workoutData.exercises.push(item.textContent.trim());
+            });
+
+            // Save to localStorage
+            localStorage.setItem('lastWorkoutPlan', JSON.stringify(workoutData));
+            
+            // Show success message
+            alert('Workout plan saved successfully! You can access it later from your browser.');
+        }
+
+        // Load last saved workout if exists
+        window.addEventListener('load', function() {
+            const savedPlan = localStorage.getItem('lastWorkoutPlan');
+            if (savedPlan) {
+                console.log('Last workout plan saved:', JSON.parse(savedPlan));
+            }
+        });
+
+        // Auto-submit on quick goal click (optional)
+        document.querySelectorAll('.goal-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const goal = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                document.getElementById('goalSelect').value = goal;
+                document.querySelector('form').submit();
+            });
+        });
+    </script>
+
+</body>
+</html>
