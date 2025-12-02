@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib import messages
+from gym.workouts import generate_workout
 
 
 def index(request):
