@@ -20,5 +20,6 @@ urlpatterns = [
     path('trainers/delete/<int:id>/', views.delete_trainer, name='delete_trainer'),
     path('trainers/assign/<int:id>/', views.assign_trainer, name='assign_trainer'),
     path('user/bmi-calculator/', bmi_calculator_user, name='bmi_calculator_user'),
-    path('bmi-calculator/', bmi_calculator, name='bmi_calculator')
+    path('bmi-calculator/', bmi_calculator, name='bmi_calculator'),
+    path('workout/', views.workout_planner, name='workout_planner')
 ]
