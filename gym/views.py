@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib import messages
+from gym.workouts import generate_workout
 
 
 def index(request):
@@ -206,3 +207,10 @@ def bmi_calculator_user(request):
 
 def bmi_calculator(request):
     return render(request, 'bmi_calculator.html')
+
+def workout_planner(request):
+    workout = None
+    if request.method == 'POST':
+        goal = request.POST.get('goal')
+        workout = generate_workout(goal)
+    return render(request, 'workout_form.html', {'workout': workout})
