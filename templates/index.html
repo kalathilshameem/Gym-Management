@@ -43,7 +43,7 @@
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-9">
                 <nav class="nav-menu">
                     <ul>
                         <li class="active"><a href="{% url 'index' %}">Home</a></li>
@@ -51,6 +51,7 @@
                         <li><a href="{% url 'services' %}">Services</a></li>
                         {% if user.is_authenticated %}
                             <li><a href="{% url 'bmi_calculator_user' %}">BMI Calculator</a></li>
+                            <li><a href="{% url 'workout_planner_user' %}">Workout Generator</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
                         {% else %}
                             <li><a href="{% url 'register' %}">Register</a></li>
@@ -59,16 +60,6 @@
                         <li><a href="{% url 'contact' %}">Contact</a></li>
                     </ul>
                 </nav>
-            </div>
-            <div class="col-lg-3">
-                <div class="top-option">
-                    <div class="to-social">
-                        <a href="#"><i class="fa fa-facebook"></i></a>
-                        <a href="#"><i class="fa fa-twitter"></i></a>
-                        <a href="#"><i class="fa fa-youtube-play"></i></a>
-                        <a href="#"><i class="fa fa-instagram"></i></a>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="canvas-open">
