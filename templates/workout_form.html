@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4"><i class="fas fa-dumbbell"></i> Workout Generator</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" class="bg-white p-4 rounded shadow-lg">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold"><i class="fas fa-bullseye"></i> Select Your Goal:</label>
+                    <select name="goal" class="form-select" required>
+                        <option value="weight_loss">Weight Loss</option>
+                        <option value="muscle_gain">Muscle Gain</option>
+                        <option value="weight_gain">Weight Gain</option>
+                        <option value="endurance">Endurance Boost</option>
+                        <option value="flexibility">Flexibility & Mobility</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 animated-btn">
+                    <i class="fas fa-magic"></i> Generate Plan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if workout %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="card workout-card text-white">
+                <div class="card-body">
+                    <h3 class="text-center"><i class="fas fa-fire-alt"></i> {{ workout.title }}</h3>
+                    <p class="text-center"><strong>Duration:</strong> {{ workout.duration }}</p>
+                    <h5><i class="fas fa-dumbbell"></i> Exercises:</h5>
+                    <ul>
+                        {% for exercise in workout.exercises %}
+                        <li>{{ exercise }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h5><i class="fas fa-utensils"></i> Nutrition Plan:</h5>
+                    <p>{{ workout.nutrition }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Custom Styling -->
+<style>
+    .workout-card {
+        background: linear-gradient(135deg, #ff6600, #ff4500);
+        border-radius: 10px;
+        padding: 20px;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Input Select */
+    .form-select {
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        transition: 0.3s;
+        padding: 10px;
+    }
+
+    .form-select:focus {
+        border-color: #ff4500;
+        box-shadow: 0px 0px 8px rgba(255, 69, 0, 0.4);
+    }
+
+    /* Button Animation */
+    .animated-btn {
+        background: linear-gradient(135deg, #ff6600, #ff4500);
+        border: none;
+        font-size: 1.2rem;
+        padding: 12px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .animated-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 5px 15px rgba(255, 69, 0, 0.5);
+    }
+
+    /* Fade-in Effect */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

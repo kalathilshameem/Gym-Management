@@ -1,0 +1,51 @@
+{% load static %}
+
+{% if error == "no" %}
+    <script>
+        alert('Logged In Successfully');
+        window.location.href = "{% url 'dashboard' %}";
+    </script>
+{% endif %}
+
+{% if error == "yes" %}
+    <script>
+        alert('Invalid Credentials, Please Try Again');
+    </script>
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+</head>
+<body class="bg-black flex justify-center items-center min-h-screen">
+    <div class="bg-gray-900 p-8 rounded-lg shadow-lg w-96">
+        <h2 class="text-white text-center text-2xl font-semibold mb-6">Admin Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <input type="text" name="uname" placeholder="Admin Username" required
+                       class="w-full p-3 bg-gray-800 text-white rounded-md outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
+            <div class="mb-4">
+                <input type="password" name="pwd" placeholder="Password" required
+                       class="w-full p-3 bg-gray-800 text-white rounded-md outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
+            <div class="mb-4">
+                <button type="submit"
+                        class="w-full p-3 bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600 transition">
+                    Login
+                </button>
+            </div>
+            <div class="text-center">
+                <a href="{% url 'index' %}" class="text-orange-400 hover:underline">Back to Home</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
