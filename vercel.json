@@ -1,5 +1,23 @@
 {
-     "buildCommand": "npm run build",
-     "outputDirectory": "build",
-     "framework": "create-react-app"
-   }
+  "builds": [
+    {
+      "src": "gymmgmt/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.9"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "gymmgmt/wsgi.py"
+    }
+  ]
+}
+```
+
+**2. Create a `requirements.txt`** in the root of your project (if you don't have one):
+```
+Django>=3.0,<4.0
