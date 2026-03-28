@@ -1,14 +1,5 @@
 {
-  "builds": [
-    {
-      "src": "Gym_Management/asgi.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "Gym_Management/asgi.py"
-    }
-  ]
-}
+     "buildCommand": "npm run build",
+     "outputDirectory": "build",
+     "framework": "create-react-app"
+   }
